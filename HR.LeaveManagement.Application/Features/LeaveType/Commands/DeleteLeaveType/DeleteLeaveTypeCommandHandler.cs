@@ -29,7 +29,7 @@ public class DeleteLeaveTypeCommandHandler : IRequestHandler<DeleteLeaveTypeComm
             throw new NotFoundException(nameof(LeaveType), request.Id);
 
         // remove from database
-        await _leaveTypeRepository.DeleteAsync(leaveTypeToDelete.Id);
+        await _leaveTypeRepository.DeleteAsync(leaveTypeToDelete);
         
         return Unit.Value;
     }
