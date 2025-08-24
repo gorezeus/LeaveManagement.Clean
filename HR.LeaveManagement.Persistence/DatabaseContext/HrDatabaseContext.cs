@@ -13,7 +13,6 @@ namespace HR.LeaveManagement.Persistence.DatabaseContext
     {
         public HrDatabaseContext(DbContextOptions<HrDatabaseContext> options) : base(options)
         {
-            
         }
 
         public DbSet<LeaveType> LeaveTypes { get; set; }

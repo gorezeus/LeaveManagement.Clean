@@ -6,10 +6,10 @@ using MediatR;
 namespace HR.LeaveManagement.Application.Features.LeaveType.Queries.GetLeaveTypeDetails;
 public class GetLeaveTypeDetailsQueryHandler : IRequestHandler<GetLeaveTypeDetailsQuery, LeaveTypeDetailsDto>
 {
-    private readonly Mapper _mapper;
+    private readonly IMapper _mapper;
     private readonly ILeaveTypeRepository _leaveTypeRepository;
 
-    public GetLeaveTypeDetailsQueryHandler(Mapper mapper, ILeaveTypeRepository leaveTypeRepository)
+    public GetLeaveTypeDetailsQueryHandler(IMapper mapper, ILeaveTypeRepository leaveTypeRepository)
     {
         _mapper = mapper;
         _leaveTypeRepository = leaveTypeRepository;
