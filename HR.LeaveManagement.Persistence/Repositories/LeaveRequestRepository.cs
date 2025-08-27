@@ -13,7 +13,7 @@ public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveReq
 
     private IQueryable<LeaveRequest> LeaveRequests()
     {
-        var leaveRequest = _context.LeaveRequests.Include(i => i.LeaveType);
+        var leaveRequest = _context.LeaveRequests.Include(i => i.LeaveType).AsNoTracking();
         return leaveRequest;
     }
 
