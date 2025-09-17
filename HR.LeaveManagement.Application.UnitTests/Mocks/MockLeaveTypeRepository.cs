@@ -38,11 +38,36 @@ namespace HR.LeaveManagement.Application.UnitTests.Mocks
             var mockRepo = new Mock<ILeaveTypeRepository>();
 
             mockRepo.Setup(r => r.GetAsync()).ReturnsAsync(leaveTypes);
-            
+
+            mockRepo.Setup(r => r.GetByIdAsync(It.IsAny<int>()))!
+                .ReturnsAsync((int id) =>
+                {
+                    var leaveType = leaveTypes.Find(p => p.Id == id);
+                    return leaveType;
+                });
+
             mockRepo.Setup(r => r.CreateAsync(It.IsAny<LeaveType>()))
                 .Returns((LeaveType leaveType) =>
                 {
+                    leaveType.Id = leaveTypes.Max(m => m.Id) + 1;
                     leaveTypes.Add(leaveType);
+                    return Task.CompletedTask;
+                });
+
+            mockRepo.Setup(r => r.UpdateAsync(It.IsAny<LeaveType>()))
+                .Returns((LeaveType leaveType) =>
+                {
+                    var leaveTypeToUpdate = leaveTypes.Find(p => p.Id == leaveType.Id);
+                    if (leaveTypeToUpdate != null) leaveTypes.Remove(leaveTypeToUpdate);
+                    leaveTypes.Add(leaveType);
+                    return Task.CompletedTask;
+                });
+
+            mockRepo.Setup(r => r.DeleteAsync(It.IsAny<LeaveType>()))
+                .Returns((LeaveType leaveType) =>
+                {
+                    var leaveTypeToRemove = leaveTypes.Find(p => p.Id == leaveType.Id);
+                    if (leaveTypeToRemove != null) leaveTypes.Remove(leaveTypeToRemove);
                     return Task.CompletedTask;
                 });
 

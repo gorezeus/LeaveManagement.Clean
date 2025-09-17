@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using Castle.Core.Logging;
+﻿using AutoMapper;
 using HR.LeaveManagement.Application.Contracts.Logging;
 using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.Features.LeaveType.Queries.GetAllLeaveTypes;
@@ -26,13 +19,11 @@ public class GetLeaveTypeQueryHandlerTests
     public GetLeaveTypeQueryHandlerTests()
     {
         _mockRepo = MockLeaveTypeRepository.GetMockLeaveTypeRepository();
-
         var mapperConfig = new MapperConfiguration(c =>
         {
             c.AddProfile<LeaveTypeProfile>();
         }, new NullLoggerFactory());
         _mapper = mapperConfig.CreateMapper();
-
         _mockAppLogger = new Mock<IAppLogger<GetLeaveTypesQueryHandler>>();
     }
 
@@ -53,4 +44,5 @@ public class GetLeaveTypeQueryHandlerTests
         result.ShouldBeOfType<List<LeaveTypeDto>>();
         result.Count.ShouldBe(3);
     }
+   
 }
