@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using HR.LeaveManagement.Application.Contracts.Logging;
 using HR.LeaveManagement.Application.Contracts.Persistence;
+using HR.LeaveManagement.Application.Exceptions;
 using HR.LeaveManagement.Application.Features.LeaveType.Commands.CreateLeaveType;
 using HR.LeaveManagement.Application.Features.LeaveType.Queries.GetAllLeaveTypes;
 using HR.LeaveManagement.Application.MappingProfiles;
@@ -15,8 +16,6 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes.Commands
     {
         private readonly Mock<ILeaveTypeRepository> _mockRepo;
         private readonly IMapper _mapper;
-        private readonly Mock<IAppLogger<GetLeaveTypesQueryHandler>>
-            _mockAppLogger;
 
         public CreateLeaveTypeCommandHandlerTests()
         {
@@ -25,15 +24,13 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes.Commands
             var mapperConfig =
                 new MapperConfiguration(c => { c.AddProfile<LeaveTypeProfile>(); }, new NullLoggerFactory());
             _mapper = mapperConfig.CreateMapper();
-            _mockAppLogger = new Mock<IAppLogger<GetLeaveTypesQueryHandler>>();
         }
 
         [Fact]
-        public async Task CreateLeaveTypeTest()
+        public async Task CreateValidLeaveTypeTest()
         {
             // Arrange
             var handler = new CreateLeaveTypeCommandHandler(_mapper, _mockRepo.Object);
-            var handlerQuery = new GetLeaveTypesQueryHandler(_mockRepo.Object, _mapper, _mockAppLogger.Object);
 
             var createLeaveTypeCommand = new CreateLeaveTypeCommand
             {
@@ -43,11 +40,24 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes.Commands
 
             // Act
             var result = await handler.Handle(createLeaveTypeCommand, CancellationToken.None);
-            var listOfLeaveType = await handlerQuery.Handle(new GetLeaveTypesQuery(), CancellationToken.None);
-
+            var listOfLeaveType = await _mockRepo.Object.GetAsync();
+            
             // Assert
             result.ShouldBe(4);
             listOfLeaveType.Count.ShouldBe(4);
+        }
+
+        [Fact]
+        public async Task CreateInvalidLeaveTypeTest()
+        {
+            // Arrange
+            var handler = new CreateLeaveTypeCommandHandler(_mapper, _mockRepo.Object);
+
+            await Assert.ThrowsAsync<BadRequestException>(async () => await handler.Handle(new CreateLeaveTypeCommand()
+            {
+                Name = "Test Vacation",
+                DefaultDays = 10
+            }, CancellationToken.None));
         }
     }
 }

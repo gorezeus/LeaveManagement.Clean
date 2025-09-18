@@ -22,8 +22,6 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes.Commands
     {
         private readonly Mock<ILeaveTypeRepository> _mockRepo;
         private readonly IMapper _mapper;
-        private readonly Mock<IAppLogger<GetLeaveTypesQueryHandler>>
-            _mockAppLogger;
 
         public DeleteLeaveTypeCommandHandlerTests()
         {
@@ -32,7 +30,6 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes.Commands
             var mapperConfig =
                 new MapperConfiguration(c => { c.AddProfile<LeaveTypeProfile>(); }, new NullLoggerFactory());
             _mapper = mapperConfig.CreateMapper();
-            _mockAppLogger = new Mock<IAppLogger<GetLeaveTypesQueryHandler>>();
         }
 
         [Fact]
@@ -40,11 +37,10 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes.Commands
         {
             // Arrange
             var handler = new DeleteLeaveTypeCommandHandler(_mockRepo.Object);
-            var handlerQuery = new GetLeaveTypesQueryHandler(_mockRepo.Object,_mapper, _mockAppLogger.Object);
 
             // Act
             var result = await handler.Handle(new DeleteLeaveTypeCommand { Id = 3 }, CancellationToken.None);
-            var leaveTypes = await handlerQuery.Handle(new GetLeaveTypesQuery(), CancellationToken.None);
+            var leaveTypes = await _mockRepo.Object.GetAsync();
 
             // Assert
             leaveTypes.Count.ShouldBe(2);

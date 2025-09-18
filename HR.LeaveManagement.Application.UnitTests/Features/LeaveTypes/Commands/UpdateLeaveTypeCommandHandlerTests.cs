@@ -40,24 +40,20 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes.Commands
         {
             // Arrange
             var handler = new UpdateLeaveTypeCommandHandler(_mapper, _mockRepo.Object, _mockUpdateAppLogger.Object);
-            var handlerQuery = new GetLeaveTypeDetailsQueryHandler(_mapper, _mockRepo.Object);
 
             var updateLeaveTypeCommand = new UpdateLeaveTypeCommand
             {
                 Id = 1,
                 DefaultDays = 20,
-                Name = "Ganti Nama"
+                Name = "Test Update Nama"
             };
 
             // Act
             var result = await handler.Handle(updateLeaveTypeCommand, CancellationToken.None);
-            var leaveType = await handlerQuery.Handle(new GetLeaveTypeDetailsQuery(1), CancellationToken.None);
-
+            var leaveType = await _mockRepo.Object.GetByIdAsync(1);
 
             // Assert
-            leaveType.Id.ShouldBe(1);
-            leaveType.Name.ShouldBe("Ganti Nama");
-            
+            leaveType.Name.ShouldBe("Test Update Nama");
         }
     }
 }

@@ -44,5 +44,4 @@ public class GetLeaveTypeQueryHandlerTests
         result.ShouldBeOfType<List<LeaveTypeDto>>();
         result.Count.ShouldBe(3);
     }
-   
 }
