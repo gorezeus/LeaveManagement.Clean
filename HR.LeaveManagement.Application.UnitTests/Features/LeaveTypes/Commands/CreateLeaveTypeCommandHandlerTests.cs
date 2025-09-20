@@ -53,11 +53,13 @@ namespace HR.LeaveManagement.Application.UnitTests.Features.LeaveTypes.Commands
             // Arrange
             var handler = new CreateLeaveTypeCommandHandler(_mapper, _mockRepo.Object);
 
-            await Assert.ThrowsAsync<BadRequestException>(async () => await handler.Handle(new CreateLeaveTypeCommand()
-            {
-                Name = "Test Vacation",
-                DefaultDays = 10
-            }, CancellationToken.None));
+            // Act & Assert
+            await Assert.ThrowsAsync<BadRequestException>(async () => 
+                await handler.Handle(new CreateLeaveTypeCommand
+                    {
+                        Name = "Test Vacation",
+                        DefaultDays = 10
+                    }, CancellationToken.None));
         }
     }
 }
