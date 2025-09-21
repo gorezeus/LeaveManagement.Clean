@@ -31,10 +31,7 @@ public class LeaveTypeService : BaseHttpService, ILeaveTypeService
         {
             var createLeaveTypeCommand = _mapper.Map<CreateLeaveTypeCommand>(leaveType);
             await _client.LeaveTypePOSTAsync(createLeaveTypeCommand);
-            return new Response<Guid>
-            {
-                Success = true
-            };
+            return new Response<Guid> { Success = true };
         }
         catch (ApiException ex)
         {
