@@ -13,6 +13,8 @@ namespace HR.LeaveManagement.BlazorUI.Pages.LeaveTypes
         [Inject]
         public ILeaveTypeService LeaveTypeService { get; set; }
         [Inject]
+        public ILeaveAllocationService LeaveAllocationService { get; set; }
+        [Inject]
         IToastService toastService { get; set; }
         public List<LeaveTypeVm> LeaveTypes { get; private set; }
         public string Message { get; set; } = string.Empty;
@@ -56,6 +58,5 @@ namespace HR.LeaveManagement.BlazorUI.Pages.LeaveTypes
         {
             LeaveTypes = await LeaveTypeService.GetLeaveTypes();
         }
-
     }
 }
