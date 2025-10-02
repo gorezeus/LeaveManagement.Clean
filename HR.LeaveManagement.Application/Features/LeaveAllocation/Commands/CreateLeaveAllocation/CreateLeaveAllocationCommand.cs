@@ -5,13 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace HR.LeaveManagement.Application.Features.LeaveAllocation.Commands.CreateLeaveAllocation
-{
-    public class CreateLeaveAllocationCommand : IRequest<int>
-    {
-        public int NumberOfDays { get; set; }
-        public int LeaveTypeId { get; set; }
-        public int Period { get; set; }
-        public string EmployeeId { get; set; } = String.Empty;
-    }
+namespace HR.LeaveManagement.Application.Features.LeaveAllocation.Commands.CreateLeaveAllocation;
+
+public class CreateLeaveAllocationCommand : IRequest<Unit>
+{ 
+    public int LeaveTypeId { get; set; }
 }
+

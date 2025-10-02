@@ -16,15 +16,10 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocation.Commands.Creat
         {
             _leaveTypeRepository = leaveTypeRepository;
 
-            RuleFor(p => p.EmployeeId)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .NotNull()
-                .MaximumLength(70).WithMessage("{PropertyName} must be fewer than 70 character");
-
             RuleFor(p => p.LeaveTypeId)
-                .GreaterThan(0)
-                .MustAsync(LeaveTypeMustExist)
-                .WithMessage("{PropertyName} does not exist");
+                .NotNull().WithMessage("{PropertyName} must be present")
+                .GreaterThan(0).WithMessage("{PropertyName} must be greater than {ComparisonValue}")
+                .MustAsync(LeaveTypeMustExist).WithMessage("{PropertyName} does not exist");
         }
 
         private async Task<bool> LeaveTypeMustExist(int leaveTypeId, CancellationToken token)
