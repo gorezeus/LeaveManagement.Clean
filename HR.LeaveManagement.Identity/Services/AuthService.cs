@@ -1,8 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using HR.LeaveManagement.Application.Contracts.Identity;
 using HR.LeaveManagement.Application.Exceptions;
-using HR.LeaveManagement.Application.Identity;
 using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Identity.Models;
 using Microsoft.AspNetCore.Identity;

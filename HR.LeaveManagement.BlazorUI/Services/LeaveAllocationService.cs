@@ -15,7 +15,6 @@ public class LeaveAllocationService : BaseHttpService, ILeaveAllocationService
     {
         try
         {
-            //await AddBearerToken();
             var command = new CreateLeaveAllocationCommand
             {
                 LeaveTypeId = leaveTypeId

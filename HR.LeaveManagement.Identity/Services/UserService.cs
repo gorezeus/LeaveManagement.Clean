@@ -1,6 +1,7 @@
-﻿using HR.LeaveManagement.Application.Identity;
+﻿using HR.LeaveManagement.Application.Contracts.Identity;
 using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Identity.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace HR.LeaveManagement.Identity.Services;
@@ -8,10 +9,14 @@ namespace HR.LeaveManagement.Identity.Services;
 public class UserService : IUserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public UserService(UserManager<ApplicationUser> userManager)
+    public string UserId => _httpContextAccessor.HttpContext?.User?.FindFirst("uid")?.Value;
+
+    public UserService(UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
     {
         this._userManager = userManager;
+        this._httpContextAccessor = httpContextAccessor;
     }
 
     public async Task<List<Employee>> GetEmployees()

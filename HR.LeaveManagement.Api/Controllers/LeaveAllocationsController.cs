@@ -5,6 +5,7 @@ using HR.LeaveManagement.Application.Features.LeaveAllocation.Queries;
 using HR.LeaveManagement.Application.Features.LeaveAllocation.Queries.GetAllLeaveAllocations;
 using HR.LeaveManagement.Application.Features.LeaveAllocation.Queries.GetLeaveAllocationDetail;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,6 +14,7 @@ namespace HR.LeaveManagement.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LeaveAllocationsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -34,7 +36,7 @@ namespace HR.LeaveManagement.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LeaveAllocationDetailDto>> Get(int id)
         {
-            var leaveAllocationDetail = await _mediator.Send(new GetLeaveAllocationDetailQuery{Id = id});
+            var leaveAllocationDetail = await _mediator.Send(new GetLeaveAllocationDetailQuery { Id = id });
             return Ok(leaveAllocationDetail);
         }
 

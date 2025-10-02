@@ -1,6 +1,6 @@
 using System;
 using System.Text;
-using HR.LeaveManagement.Application.Identity;
+using HR.LeaveManagement.Application.Contracts.Identity;
 using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Identity.DbContext;
 using HR.LeaveManagement.Identity.Models;
