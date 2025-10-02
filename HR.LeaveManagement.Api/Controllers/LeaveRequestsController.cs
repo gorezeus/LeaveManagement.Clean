@@ -27,9 +27,9 @@ namespace HR.LeaveManagement.Api.Controllers
 
         //// GET: api/<LeaveRequestsController>
         [HttpGet]
-        public async Task<ActionResult<IList<LeaveRequestDto>>> Get()
+        public async Task<ActionResult<IList<LeaveRequestDto>>> Get(bool isLoggedInUser = false)
         {
-            var leaveRequests = await _mediator.Send(new GetAllLeaveRequestCommand());
+            var leaveRequests = await _mediator.Send(new GetAllLeaveRequestQuery());
             return Ok(leaveRequests);
         }
 
@@ -37,12 +37,15 @@ namespace HR.LeaveManagement.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<LeaveRequestDetailDto>> Get(int id)
         {
-            var leaveRequest = await _mediator.Send(new GetLeaveRequestDetailCommand { Id = id });
+            var leaveRequest = await _mediator.Send(new GetLeaveRequestDetailQuery { Id = id });
             return Ok(leaveRequest);
         }
 
         // POST api/<LeaveRequestsController>
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> Post([FromBody] CreateLeaveRequestCommand leaveRequest)
         {
             var response = await _mediator.Send(leaveRequest);
@@ -93,5 +96,5 @@ namespace HR.LeaveManagement.Api.Controllers
             await _mediator.Send(updateApproval);
             return NoContent();
         }
-    } 
+    }
 }

@@ -7,7 +7,8 @@ using MediatR;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequest.Queries.GetAllLeaveRequests
 {
-    public class GetAllLeaveRequestCommand : IRequest<List<LeaveRequestDto>>
+    public class GetAllLeaveRequestQuery : IRequest<List<LeaveRequestDto>>
     {
+        public bool IsLoggedInUser { get; set; }
     }
 }

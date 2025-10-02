@@ -49,7 +49,28 @@ public class LeaveRequestService : BaseHttpService, ILeaveRequestService
         throw new NotImplementedException();
     }
 
+    public async Task<AdminLeaveRequestViewVm> GetAdminLeaveRequestList()
+    {
+        var leaveRequests = await _client.LeaveRequestsAllAsync(isLoggedInUser: false);
+
+        var model = new AdminLeaveRequestViewVm
+        {
+            TotalRequests = leaveRequests.Count,
+            ApprovedRequests = leaveRequests.Count(q => q.Approved == true),
+            PendingRequests = leaveRequests.Count(q => q.Approved == null),
+            RejectedRequests = leaveRequests.Count(q => q.Approved == false),
+            LeaveRequests = _mapper.Map<List<LeaveRequestVm>>(leaveRequests)
+        };
+        return model;
+
+    }
+
     public Task<LeaveRequestVm> GetLeaveRequest(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<EmployeeLeaveRequestViewVm> GetUserLeaveRequests()
     {
         throw new NotImplementedException();
     }
