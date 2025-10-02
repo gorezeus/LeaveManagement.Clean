@@ -9,14 +9,18 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequest.Commands.ChangeLe
 public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLeaveRequestApprovalCommand, Unit>
 {
     private readonly ILeaveRequestRepository _leaveRequestRepository;
+    private readonly ILeaveAllocationRepository _leaveAllocationRepository;
     private readonly IEmailSender _emailSender;
     private readonly ILogger<ChangeLeaveRequestApprovalCommand> _logger;
 
-    public ChangeLeaveRequestApprovalCommandHandler(ILeaveRequestRepository leaveRequestRepository,
+    public ChangeLeaveRequestApprovalCommandHandler(
+        ILeaveRequestRepository leaveRequestRepository,
+        ILeaveAllocationRepository leaveAllocationRepository,
         IEmailSender emailSender,
         ILogger<ChangeLeaveRequestApprovalCommand> logger)
     {
         _leaveRequestRepository = leaveRequestRepository;
+        this._leaveAllocationRepository = leaveAllocationRepository;
         _emailSender = emailSender;
         _logger = logger;
     }
@@ -39,6 +43,19 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
 
         // if request is approved, get and update the employee's allocations
 
+        if (request.Approved)
+        {
+            // get employee's leave allocation for the leave type requested
+            var allocation = await _leaveAllocationRepository.GetUserAllocations(leaveRequest.RequestingEmployeeId,
+                leaveRequest.LeaveTypeId);
+            var daysRequested = (int)(leaveRequest.EndDate - leaveRequest.StartDate).TotalDays;
+            if (allocation != null)
+            {
+                allocation.NumberOfDays -= daysRequested;
+                await _leaveAllocationRepository.UpdateAsync(allocation);
+            }
+        }
+
         try
         {
             var email = new EmailMessage
@@ -49,7 +66,7 @@ public class ChangeLeaveRequestApprovalCommandHandler : IRequestHandler<ChangeLe
                 Subject = "Leave Request Cancelled"
             };
 
-            //await _emailSender.SendEmail(email);
+            await _emailSender.SendEmail(email);
         }
         catch (Exception e)
         {
