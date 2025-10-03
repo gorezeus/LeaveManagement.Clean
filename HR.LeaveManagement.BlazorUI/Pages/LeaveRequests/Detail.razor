@@ -1,18 +1,17 @@
 ﻿@page "/leaverequests/details/{id:int}"
 <h3>Details</h3>
 
-
 <div class="alert alert-@ClassName" role="alert">
     <h4 class="alert-heading">@HeadingText</h4>
+      @**@
     <p>
         <strong>Employee name:</strong> @Model.Employee.Firstname @Model.Employee.Lastname <br />
     </p>
-    <hr />
+    <hr /> 
     <p>
         Date Requested - @Model.DateRequested
     </p>
 </div>
-
 
 <div>
 
@@ -44,6 +43,7 @@
         </dd>
     </dl>
 </div>
+
 <div>
 
     @if (Model.Approved == null)
@@ -57,4 +57,4 @@
     }
     <BackToList Target="leaverequests/" />
    
-</div>
+</div> 

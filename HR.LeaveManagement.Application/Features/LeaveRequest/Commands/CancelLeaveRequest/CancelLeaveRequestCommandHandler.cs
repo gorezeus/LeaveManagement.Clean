@@ -11,17 +11,21 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequest.Commands.CancelLeaveRequest;
+
 public class CancelLeaveRequestCommandHandler : IRequestHandler<CancelLeaveRequestCommand, Unit>
 {
     private readonly ILeaveRequestRepository _leaveRequestRepository;
+    private readonly ILeaveAllocationRepository _leaveAllocationRepository;
     private readonly IEmailSender _emailSender;
     private readonly ILogger<CancelLeaveRequestCommand> _logger;
 
-    public CancelLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository, 
+    public CancelLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository,
+        ILeaveAllocationRepository leaveAllocationRepository,
         IEmailSender emailSender,
         ILogger<CancelLeaveRequestCommand> logger)
     {
         _leaveRequestRepository = leaveRequestRepository;
+        this._leaveAllocationRepository = leaveAllocationRepository;
         _emailSender = emailSender;
         _logger = logger;
     }
@@ -32,10 +36,15 @@ public class CancelLeaveRequestCommandHandler : IRequestHandler<CancelLeaveReque
             throw new NotFoundException(nameof(leaveRequest), request.LeaveRequestId);
 
         leaveRequest.Cancelled = true;
-
+        await _leaveRequestRepository.UpdateAsync(leaveRequest);
         // Re-evaluate the employee's allocations for the leave types
 
-        await _leaveRequestRepository.UpdateAsync(leaveRequest);
+        if (leaveRequest.Approved == true)
+        {
+            var leaveAllocation = await _leaveAllocationRepository.GetUserAllocations(leaveRequest.RequestingEmployeeId, leaveRequest.LeaveTypeId);
+            leaveAllocation.NumberOfDays += (leaveRequest.EndDate - leaveRequest.StartDate).Days;
+            await _leaveAllocationRepository.UpdateAsync(leaveAllocation);
+        }
 
         // send confirmation email
         try
@@ -48,13 +57,13 @@ public class CancelLeaveRequestCommandHandler : IRequestHandler<CancelLeaveReque
                 Subject = "Leave Request Cancelled"
             };
 
-            //await _emailSender.SendEmail(email);
+            await _emailSender.SendEmail(email);
         }
         catch (Exception e)
         {
-           _logger.LogWarning(e.Message); 
+            _logger.LogWarning(e.Message);
         }
-         
+
         return Unit.Value;
     }
 }
