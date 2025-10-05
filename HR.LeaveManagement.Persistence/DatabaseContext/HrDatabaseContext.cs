@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HR.LeaveManagement.Application.Contracts.Identity;
 using HR.LeaveManagement.Domain;
 using HR.LeaveManagement.Domain.Common;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +12,12 @@ namespace HR.LeaveManagement.Persistence.DatabaseContext
 {
     public class HrDatabaseContext : DbContext
     {
-        public HrDatabaseContext(DbContextOptions<HrDatabaseContext> options) : base(options)
+        private readonly IUserService _userService;
+
+        public HrDatabaseContext(DbContextOptions<HrDatabaseContext> options,
+        IUserService userService) : base(options)
         {
+            _userService = userService;
         }
 
         public DbSet<LeaveType> LeaveTypes { get; set; }
@@ -30,9 +35,11 @@ namespace HR.LeaveManagement.Persistence.DatabaseContext
             foreach (var entry in base.ChangeTracker.Entries<BaseEntity>().Where(q => q.State == EntityState.Added || q.State == EntityState.Modified))
             {
                 entry.Entity.DateModified = DateTime.Now;
+                entry.Entity.ModifiedBy = _userService.UserId;
                 if (entry.State == EntityState.Added)
                 {
                     entry.Entity.DateCreated = DateTime.Now;
+                    entry.Entity.CreatedBy = _userService.UserId;
                 }
             }
             return base.SaveChangesAsync(cancellationToken);
